@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>HOPE 01 text extractor</title>
+<style>
+	body { font-family: monospace; background: #111; color: #ddd; padding: 12px; }
+	pre { white-space: pre-wrap; }
+	button { font: inherit; padding: 4px 10px; }
+</style>
+</head>
+<body>
+<h3>HOPE 01 text extractor</h3>
+<p>Reads <code>/game/data.json</code> + <code>/game/scripts/c3main.js</code> and writes
+<code>work/strings.csv</code>, <code>work/glossary.csv</code>, <code>work/strings.json</code>.</p>
+<button id="run">Extract</button>
+<pre id="log"></pre>
+<script src="lib.js"></script>
+<script>
+/*
+ * What gets translated (rule from the project brief):
+ *   - NOT translated: item names, room / place names, NPC names, upgrade names
+ *   - translated: dialogue, dialogue options, descriptions, tutorial / UI text, signs
+ *   - names mentioned inside translated text stay in English -> "keep_terms" column
+ *
+ * Every entry records the exact JSON paths (or c3main.js literal) it comes from, so the
+ * apply step can put the Thai text back and verify the English it replaces.
+ */
+const log = s => { document.getElementById("log").textContent += s + "\n"; };
+
+// Player-facing text is ALL CAPS in this game.
+const isText = s => {
+	if (typeof s !== "string") return false;
+	// BBCode tags ([color=rgb(...)]) are lowercase; ignore them for the all-caps test, else short
+	// coloured item descriptions (e.g. the 47 magazines) are skipped.
+	const letters = s.replace(/\[\/?[a-z]+(=[^\]]*)?\]/gi, "").replace(/[^A-Za-z]/g, "");
+	if (letters.length < 2) return false;
+	if (/_/.test(s) && !/\s/.test(s)) return false;
+	if (/^(images|media|fonts|icons)\//.test(s)) return false;
+	return s.replace(/[^A-Z]/g, "").length / letters.length >= 0.9;
+};
+
+// category -> [translate?, description]
+const CATEGORIES = {
+	dialogue:     [true,  "NPC dialogue line (Flowchart)"],
+	option:       [true,  "dialogue choice (Flowchart)"],
+	item_desc:    [true,  "item description"],
+	upgrade_desc: [true,  "upgrade description"],
+	sign:         [true,  "readable sign in the level"],
+	ui:           [true,  "UI text (menus, dropdowns)"],
+	script:       [true,  "text in event expressions (c3main.js): tutorial / UI"],
+	item_name:    [false, "item name - keep English"],
+	upgrade_name: [false, "upgrade name - keep English"],
+	place:        [false, "place / room label - keep English"]
+};
+
+async function extract() {
+	log("loading data.json ...");
+	const data = await (await fetch("/game/data.json")).json();
+	const P = data.project, T = P[3];
+	if (T.some(t => Array.isArray(t[6]) && String(t[6][0]).includes("thai-font-")))
+		throw new Error("the game folder has the Thai build installed - run tools/uninstall.ps1 first (extract needs the original data.json)");
+	const entries = new Map(); // key category|english -> entry
+	const add = (category, english, where, context) => {
+		const key = category + "|" + english;
+		let e = entries.get(key);
+		if (!e) entries.set(key, e = { category, english, paths: [], literals: 0, contexts: new Set(), order: entries.size });
+		if (where.path) e.paths.push(where.path);
+		if (where.literal) e.literals++;
+		if (context) e.contexts.add(context);
+	};
+
+	// --- Flowchart dialogue: P[49] = [[flowName, nodes[]], ...]; node[5] = outputs [id, key, value, ...]
+	// The speaker ("profile") is only set on the first node of a conversation: carry it forward
+	// in node order. "left"/"right" are portrait sides, not speakers.
+	const speakerOf = new Map(); // entry key -> speaker (first seen)
+	P[49].forEach((flow, fi) => {
+		let speaker = "";
+		flow[1].forEach((node, ni) => {
+			if (!Array.isArray(node) || !Array.isArray(node[5])) return;
+			const profile = (node[5].find(o => o[1] === "profile") || [])[2] || "";
+			if (profile && profile !== "left" && profile !== "right") speaker = profile;
+			node[5].forEach((out, oi) => {
+				const key = out[1], text = out[2];
+				if (!isText(text)) return;
+				const path = [49, fi, 1, ni, 5, oi, 2];
+				const ctx = `${flow[0]}#${node[0]}${profile ? " (" + profile + ")" : ""}`;
+				// Options are said by the player (female protagonist).
+				const who = /^option\d$/.test(key) ? "player" : (speaker || (flow[0] === "hermes" ? "hermes" : ""));
+				const cat = key === "dialogue" ? "dialogue" : /^option\d$/.test(key) ? "option" : null;
+				if (!cat) return;
+				add(cat, text, { path }, ctx);
+				if (!speakerOf.has(cat + "|" + text)) speakerOf.set(cat + "|" + text, who);
+			});
+		});
+	});
+
+	// --- Layout instances (layers can nest through layer[21])
+	const layoutName = li => P[5][li][0];
+	const walkLayers = (layers, basePath, visit) => layers.forEach((ly, i) => {
+		const lp = basePath.concat(i);
+		(ly[14] || []).forEach((inst, ii) => visit(inst, lp.concat(14, ii), ly[0]));
+		if (Array.isArray(ly[21])) walkLayers(ly[21], lp.concat(21), visit);
+	});
+	P[5].forEach((layout, li) => walkLayers(layout[10], [5, li, 10], (inst, ip, layerName) => {
+		const t = T[inst[1]];
+		if (!t) return;
+		const varNames = (t[3] || []).map(v => v[2]);
+		// instance variables
+		(inst[3] || []).forEach((val, vi) => {
+			if (!isText(val)) return;
+			const v = varNames[vi], path = ip.concat(3, vi), ctx = `${t[0]} @${layoutName(li)}`;
+			if (v === "ItemTextTitle") add("item_name", val, { path }, t[0]);
+			else if (v === "ItemTextDescription") add("item_desc", val, { path }, t[0]);
+			else if (v === "upgradetitle") add("upgrade_name", val, { path }, t[0]);
+			else if (v === "upgradetext") add("upgrade_desc", val, { path }, t[0]);
+			else if (v === "signtext") add("sign", val, { path }, ctx);
+			else if (v === "DropDownTitle" || v === "DropDown") add("ui", val, { path }, ctx);
+			else if (v === "floor") add("place", val, { path }, ctx);
+		});
+		// SpriteFont text property: inst[5][0]
+		if (t[1] === 6 && inst[5] && isText(inst[5][0])) {
+			const path = ip.concat(5, 0), text = inst[5][0];
+			// Menus and the UI*/Screen layers are UI (settings, inventory); labels placed
+			// anywhere else in the level are place / room names.
+			const isUi = layoutName(li) !== "MainGame" || /^(UI|Screen)/i.test(layerName);
+			if (isUi) add("ui", text, { path }, `${t[0]} @${layoutName(li)}/${layerName}`);
+			else add("place", text, { path }, `${t[0]} @${layerName}`);
+		}
+	}));
+
+	// --- String literals in compiled event expressions (c3main.js)
+	log("loading c3main.js ...");
+	const js = await (await fetch("/game/scripts/c3main.js")).text();
+	const seenJs = new Set();
+	for (const m of js.matchAll(/"((?:[^"\\\n]|\\.)*)"/g)) {
+		const raw = m[1];
+		let text;
+		try { text = JSON.parse('"' + raw + '"'); } catch (e) { continue; }
+		// At least two real words, so fragments like "NT " are left alone.
+		if (!isText(text) || seenJs.has(text) || (text.match(/[A-Z]{2,}/g) || []).length < 2) continue;
+		// Engine messages are mixed case, so isText already filters them out.
+		seenJs.add(text);
+		add("script", text, { literal: true }, "c3main.js");
+	}
+
+	// --- Glossary: names that must stay English everywhere
+	const glossary = new Map();
+	// Names that are also ordinary English words / placeholders: protecting them would leave
+	// random English words inside Thai sentences.
+	const STOP = new Set(["ONE", "LOCKED", "TEXTFIELD", "YAY", "INFO", "TUTORIAL", "LEFT", "RIGHT"]);
+	const addTerm = (term, kind) => {
+		term = term.trim();
+		if (term.length < 3 || !/[A-Z]/.test(term) || STOP.has(term)) return;
+		if (!glossary.has(term)) glossary.set(term, kind);
+	};
+	for (const e of entries.values()) {
+		if (e.category === "item_name") addTerm(e.english, "item");
+		if (e.category === "upgrade_name") addTerm(e.english, "upgrade");
+		if (e.category === "place") e.english.split("\n").forEach(s => addTerm(s, "place"));
+	}
+	// NPC names from dialogue speaker profiles
+	for (const flow of P[49]) for (const node of flow[1]) {
+		const prof = Array.isArray(node) && Array.isArray(node[5]) && (node[5].find(o => o[1] === "profile") || [])[2];
+		if (prof && prof !== "info" && prof !== "tutorial") addTerm(String(prof).toUpperCase(), "npc");
+	}
+	// Game-world nouns seen across the text (districts, currency, weapon class).
+	for (const t of ["HAB-01", "HAB 01", "HAB-02", "HAB 02", "FABRICK", "FABRICKS", "FABRICKAT", "STUG", "STUGS", "SCHEMA-DECK", "MILSEC", "BCS", "MONORAIL"]) addTerm(t, "world");
+
+	// Names that are also everyday words: keep them only when they mean the in-game place /
+	// item. They are listed with a "?" in keep_terms so the translator decides from context.
+	const COMMON = new Set(["GENERAL", "SECURITY", "TRAINING", "MAINTENANCE", "ENGINEERING", "ACTIVITY", "OFFICE",
+		"ARCHIVE", "CAFETERIA", "ROCKET", "ARMORY", "BUNKER", "MONORAIL", "MILK", "TEA", "TACOS", "VODKA", "BANDAGE",
+		"LANTERN", "SPLINT", "PAINKILLERS", "CURRY", "DEFENDER", "PIPER", "RATTLER", "POUTINE"]);
+	for (const [t, kind] of glossary) if (COMMON.has(t)) glossary.set(t, kind + "-common");
+
+	// Longest first so "INJURY KIT" wins over "KIT".
+	const terms = [...glossary.keys()].sort((a, b) => b.length - a.length);
+	const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	const termRe = terms.map(t => [t, new RegExp(`(^|[^A-Z0-9])${esc(t)}(?=$|[^A-Z0-9])`)]);
+	const keepTermsOf = text => {
+		const found = [];
+		let rest = text;
+		for (const [t, re] of termRe) {
+			if (re.test(rest)) { found.push(glossary.get(t).endsWith("-common") ? t + "?" : t); rest = rest.replace(new RegExp(esc(t), "g"), " "); }
+		}
+		return found;
+	};
+
+	// --- Output
+	const list = [...entries.values()].sort((a, b) => a.order - b.order);
+	let n = 0;
+	const rows = list.map(e => {
+		const [translate] = CATEGORIES[e.category];
+		const id = `${e.category}.${String(++n).padStart(4, "0")}`;
+		e.id = id;
+		return {
+			id, category: e.category, translate: translate ? "yes" : "no",
+			english: e.english, thai: "",
+			keep_terms: translate ? keepTermsOf(e.english).join(" | ") : "",
+			speaker: speakerOf.get(e.category + "|" + e.english) || "",
+			context: [...e.contexts].slice(0, 3).join(" ; "),
+			count: e.paths.length + e.literals
+		};
+	});
+	const glossaryRows = terms.map(t => ({ term: t, kind: glossary.get(t) })).sort((a, b) => a.kind.localeCompare(b.kind) || a.term.localeCompare(b.term));
+
+	await HM.save("strings.csv", HM.toCsv(rows, ["id", "category", "translate", "english", "thai", "keep_terms", "speaker", "context", "count"]));
+	await HM.save("glossary.csv", HM.toCsv(glossaryRows, ["term", "kind"]));
+	await HM.save("strings.json", JSON.stringify(list.map(e => ({ id: e.id, category: e.category, english: e.english, paths: e.paths, literal: e.literals > 0 })), null, 0));
+
+	// Summary
+	const byCat = {};
+	for (const r of rows) {
+		const c = (byCat[r.category] ||= { strings: 0, words: 0 });
+		c.strings++;
+		c.words += r.english.trim().split(/\s+/).length;
+	}
+	log("\nsaved work/strings.csv, work/glossary.csv, work/strings.json\n");
+	log(Object.entries(byCat).map(([k, v]) => `${k.padEnd(13)} ${CATEGORIES[k][0] ? "translate" : "keep     "}  ${String(v.strings).padStart(5)} strings  ${String(v.words).padStart(6)} words`).join("\n"));
+	log(`\nglossary terms: ${terms.length}`);
+	window.RESULT = { rows, glossaryRows, byCat };
+}
+
+document.getElementById("run").onclick = () => extract().catch(e => log("ERROR " + e.stack));
+// #auto (used by the installer): run, then write work/extract-done.txt = "OK" or "ERROR ..." + the log.
+if (location.hash === "#auto") extract().then(() => "OK", e => (log("ERROR " + e.stack), "ERROR " + e.message))
+	.then(status => HM.save("extract-done.txt", status + "\n" + document.getElementById("log").textContent));
+</script>
+</body>
+</html>

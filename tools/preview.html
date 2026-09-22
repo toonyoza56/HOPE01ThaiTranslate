@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>HOPE 01 Thai text preview</title>
+<style>
+	body { font-family: monospace; background: #111; color: #ddd; padding: 12px; }
+	canvas { image-rendering: pixelated; display: block; margin: 6px 0 14px; }
+</style>
+</head>
+<body>
+<h3>SpriteFont preview (patched build)</h3>
+<p>Draws translated strings the way the game's SpriteFont does (sheet, widths, scale, line height,
+word wrap at spaces / U+200B, box width) at 3x = 1920x1080 display size.</p>
+<div id="out"></div>
+<script>
+/*
+ * ?type=<SpriteFont type>&ids=<comma separated ids from translations/th.csv>
+ * Also saves the image to work/preview-<type>.png for review outside the browser.
+ */
+const qs = new URLSearchParams(location.search);
+const TYPES = (qs.get("types") || "ui_dialogue_textframe_text,item_stext_description,ui_dialogue_textframe_choice1").split(",");
+const ZOOM = 3;
+
+(async () => {
+	const data = await (await fetch("/play/data.json")).json();
+	const P = data.project, T = P[3];
+	const byType = {};
+	const walk = ls => ls.forEach(ly => { (ly[14] || []).forEach(i => { const t = T[i[1]]; if (t && !byType[t[0]]) byType[t[0]] = { inst: i, type: t }; }); if (Array.isArray(ly[21])) walk(ly[21]); });
+	P[5].forEach(l => walk(l[10]));
+
+	// Sample texts: every patched string of the categories each box shows.
+	const strings = await (await fetch("/work/strings.json")).json();
+	const getAt = path => path.reduce((x, k) => x[k], P);
+	const samples = { dialogue: [], option: [], item_desc: [] };
+	for (const e of strings) {
+		if (!samples[e.category] || !e.paths.length) continue;
+		const v = getAt(e.paths[0]);
+		if (v !== e.english) samples[e.category].push(v); // translated (encoded) text
+	}
+	const pick = { ui_dialogue_textframe_text: "dialogue", item_stext_description: "item_desc", ui_dialogue_textframe_choice1: "option" };
+
+	for (const typeName of TYPES) {
+		const entry = byType[typeName];
+		if (!entry) continue;
+		const { inst, type } = entry;
+		const q = inst[5];
+		const img = new Image();
+		img.src = "/play/" + type[6][0] + "?" + Date.now();
+		await img.decode();
+		const cell = q[2], charset = [...q[4]], scale = q[6], lineAdv = q[3] * scale + q[8];
+		const cols = Math.floor(img.width / cell);
+		const widths = new Map();
+		for (const [w, chars] of JSON.parse(q[5] || "[]")) for (const c of chars) widths.set(c, w);
+		const adv = c => (widths.has(c) ? widths.get(c) : cell) * scale + q[7];
+		const boxW = inst[0][3];
+		const texts = samples[pick[typeName]] || [];
+
+		// word wrap: tokens split at whitespace (space, U+200B, newline kept)
+		const wrap = text => {
+			const lines = [];
+			for (const para of text.split("\n")) {
+				let line = "", lineW = 0;
+				for (const tok of para.split(/(?<=[ ​])/)) {
+					const w = [...tok].reduce((s, c) => s + adv(c), 0);
+					if (line && lineW + w > boxW) { lines.push(line); line = ""; lineW = 0; }
+					line += tok; lineW += w;
+				}
+				lines.push(line);
+			}
+			return lines;
+		};
+
+		const blocks = texts.slice(0, 12).map(wrap);
+		const height = blocks.reduce((h, b) => h + b.length * lineAdv + 10, 10);
+		const cv = document.createElement("canvas");
+		cv.width = (boxW + 20) * ZOOM;
+		cv.height = height * ZOOM;
+		const g = cv.getContext("2d");
+		g.imageSmoothingEnabled = false;
+		g.fillStyle = "#1b1f2a";
+		g.fillRect(0, 0, cv.width, cv.height);
+		let y = 10;
+		for (const lines of blocks) {
+			g.strokeStyle = "#445";
+			g.strokeRect(10 * ZOOM, (y - 2) * ZOOM, boxW * ZOOM, (lines.length * lineAdv + 4) * ZOOM);
+			for (const line of lines) {
+				let x = 10;
+				for (const c of line) {
+					const i = charset.indexOf(c);
+					if (i >= 0) g.drawImage(img, (i % cols) * cell, Math.floor(i / cols) * cell, cell, cell, x * ZOOM, y * ZOOM, cell * scale * ZOOM, cell * scale * ZOOM);
+					x += adv(c);
+				}
+				y += lineAdv;
+			}
+			y += 10;
+		}
+		const h = document.createElement("div");
+		h.textContent = `${typeName}: box ${boxW}px wide, cell ${cell} @ scale ${scale}, line ${lineAdv.toFixed(1)}px`;
+		document.getElementById("out").append(h, cv);
+		const blob = await new Promise(r => cv.toBlob(r, "image/png"));
+		await fetch(`/work/preview-${typeName}.png`, { method: "POST", body: blob });
+	}
+})().catch(e => document.body.append("ERROR " + e.stack));
+</script>
+</body>
+</html>

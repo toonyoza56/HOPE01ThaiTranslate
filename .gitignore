@@ -1,0 +1,15 @@
+# generated / local only
+build/
+work/
+backup/
+release/
+install-log.txt
+# never commit game files
+*.webp
+data.json
+c3main.js
+# unused experiments (resized fonts were unreadable in game - see CODEX_REVIEW.md section 0)
+fonts/Thai_7x7.bitsyfont
+fonts/Thai_4x5.bitsyfont
+tools/make-thai-7x7-font.mjs
+tools/make-thai-4x5-font.mjs

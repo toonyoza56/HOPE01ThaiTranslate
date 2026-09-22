@@ -1,0 +1,172 @@
+# th-017: strings the extractor used to skip (they contain [color=...] tags) - translated by hand.
+# Script fragments (script.2752-2849) are joined with key names at runtime; keep tags and order.
+dialogue.0051|( [color=rgb(115, 255, 0)]ลาก[/color]ไอเทมไปวางบน CYCLER เพื่อ[color=rgb(115, 255, 0)]รีไซเคิล[/color]บน PC หรือกด [color=rgb(115, 255, 0)]X[/color] ค้างบนไอเทมเมื่อใช้ GAME PAD )
+dialogue.0122|(ขณะ[color=rgb(255, 0, 0)]สวมใส่[/color] PICODER ไว้ในช่อง GADGET และ[color=rgb(255, 0, 0)]เปิด[/color]อยู่ ให้กำจัดศัตรู 20 ตัวและค้นกล่อง 10 กล่อง)
+item_desc.2044|อุปกรณ์มือถือขนาดเล็กที่ตรวจจับสัญญาณชีพในพื้นที่ พร้อมสแกนหาจุดอ่อนและรหัสเรียกขานสังกัดที่เข้ารหัสไว้\n\nมันมีค่ามหาศาลหลังสงครามรวมชาติลุกลามลงไปใต้พื้นผิวที่ไหม้เกรียมของดาว\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]ACTIVATABLE[/color]
+item_desc.2116|MAINTENANCE DRONE ที่ติดตั้งเครื่องมือและโปรโตคอลสำหรับซ่อมสิ่งของที่พังซึ่งอยู่ในฐานข้อมูลของมันโดยอัตโนมัติ\n\nมักใช้กับงานง่ายแต่เข้าถึงยาก ทีมซ่อมบำรุงจึงเอ็นดูมันมาก\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]TOGGLEABLE[/color]\nเติมพลังด้วย FABRICKS สาธารณะ
+item_desc.2122|อุปกรณ์มือถือขนาดเล็กที่พ่นนาไนต์ละอองซึ่งพา MEDIPLAST ไว้สำหรับสูดเข้าไป\n\nเมื่อเข้าสู่ร่างกาย นาไนต์จะตามการตอบสนองของร่างกายไปยังบาดแผลที่วิกฤตที่สุดเพื่อทำให้คงที่และรักษา\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]ACTIVATABLE[/color]\nเติมพลังด้วย FABRICKS ทางการแพทย์
+item_desc.2188|แหล่งแสงแข็งแรงที่ยึดติดกับพื้นได้\n---------------------------\nอยู่จนกว่าจะถูกทำลาย\n\nกด [color=rgb(36, 255, 109)]MISC OR LSTICK[/color] เพื่อเปลี่ยนสี
+item_desc.2271|อุปกรณ์เล็ก ๆ ช่วยรีโหลด STUGS ที่ปกติบรรจุกระสุนทีละนัด\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]PASSIVELY ENABLED[/color]\nเพิ่มกระสุนที่บรรจุต่อการรีโหลด 1 นัด สำหรับ STUGS ที่รีโหลดทีละนัด
+item_desc.2277|GADGET เสริมที่ติดกับอาวุธได้ ให้แสงสว่างมากขึ้นในความมืด\n--------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]TOGGLEABLE[/color]\nเติมพลังด้วย PUBLIC FABRICK
+item_desc.2283|อุปกรณ์เล็ก ๆ ช่วยรีโหลด STUGS ที่ปกติบรรจุกระสุนทีละนัด\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]PASSIVELY ENABLED[/color]\nเพิ่มกระสุนที่บรรจุต่อการรีโหลด 2 นัด สำหรับ STUGS ที่รีโหลดทีละนัด
+item_desc.2285|GADGET เสริมที่ติดกับอาวุธได้ ยิงเลเซอร์สว่างช่วยในการเล็งเป้า\n--------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]TOGGLEABLE[/color]\nเติมพลังด้วย PUBLIC FABRICK
+item_desc.2289|เมื่อเปิด GADGET นี้ กระสุนที่ยิงออกไปจะถูกเคลือบด้วยสีเรืองแสง\n\nเป็น GADGET ของงานอดิเรก POPSTUG ใช้ระบุผู้เล่นที่ถูกยิงตกรอบ\n\nงานอดิเรกสุดเข้มข้นนี้มีไว้สำหรับคนมีสิทธิพิเศษไม่กี่คนที่ประวัติดีเท่านั้น\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]TOGGLEABLE[/color]\n[color=rgb(254, 134, 210)]ไอเทมสุดหรู[/color]
+item_desc.2291|GADGET นี้เติมสารอาหารที่สูญเสียไป และเปลี่ยนส่วนเกินเป็นแรงกระตุ้นการรักษาตามธรรมชาติ\n\nเป็นทางลัดประหยัดเวลาในการได้รับสารอาหารครบ โดยไม่ต้องยุ่งยากกับการกิน\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]ACTIVATABLE[/color]\nเติมพลังด้วย FABRICKS ทางการแพทย์
+item_desc.2307|โดรนป้องกันจุดที่ออกแบบมาทำลายกระสุนที่พุ่งเข้ามา ได้ผลดีมากในการยิงปะทะขนาดเล็ก แต่ระบบประมวลผลภายในมีจำกัด\n\nมันจึงรับมือไม่ไหวเมื่อเจอเสียงปืนระดมใส่\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]TOGGLEABLE[/color]\nเติมพลังด้วย FABRICKS ทางทหาร
+item_desc.2443|GADGET เสริมที่ยิงทั้งเลเซอร์และแสงสว่าง ช่วยในการเล็งเป้า\n\nยึดกับอาวุธด้วยแรงโน้มถ่วง จึงติดได้กับพื้นผิวเกือบทุกแบบ\n--------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]TOGGLEABLE[/color]\nเติมพลังด้วย PUBLIC FABRICK
+item_desc.2450|มีดที่ยืดออกได้ด้วยแรงดีด\n\nเป็นแบบจำลองพร็อพจาก PICODE ยอดนิยม\n\nหลังได้รับอนุมัติให้พิมพ์ มันก็ถูกแบนอย่างรวดเร็วเพราะอุบัติเหตุโดนแทงพุ่งสูงขึ้นมาก\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]PASSIVELY ENABLED[/color]\nการโจมตีด้วยมีดของเธอยาวขึ้นเล็กน้อย
+item_desc.2457|GADGET ที่บิดเบือนแสงรอบตัวผู้สวม ทำให้ถูกตรวจจับได้ยากขึ้น\n\nแม้เป้าหมายคือการล่องหนสมบูรณ์ แต่ในความมืดของสงครามในถ้ำ แค่นี้ก็เพียงพอ\n\nแต่มันช่วยอะไรเรื่องเสียงหรือความร้อนไม่ได้เลย...\n--------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]TOGGLEABLE[/color]\nเติมพลังด้วย PUBLIC FABRICK
+item_desc.2465|ก้อนเมือกประหลาด\n\nจับแล้วรู้สึกดีอย่างน่าประหลาดใจ...\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]ACTIVATABLE[/color]\nเติมพลังด้วย FABRICKS ทางการแพทย์
+item_desc.2469|ถุงมือสำหรับกีฬาต่อสู้\n\nมันเดือดพล่านด้วยความกระหายเลือด...\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]PASSIVELY ENABLED[/color]
+item_desc.2471|เห็ดนิ่มยวบยาบ\n\nมันไม่ชอบให้ใครจับ\n\nมันหิว...\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]ACTIVATABLE[/color]\nเติมพลังด้วย FABRICKS สาธารณะ
+item_desc.2475|ORANGE GOOP อุ่น ๆ เมื่อสัมผัส\n\nมันหล่นลงพื้นดังแปะอย่างสะใจ\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]ACTIVATABLE[/color]\nเติมพลังด้วย FABRICKS สาธารณะ\nGOOP จะอยู่ได้ 3 RAID
+item_desc.2517|TOPOR ถูกพบฝังลึกอยู่ในนิตยสาร STUG ยุคก่อนสงคราม เป็น STUG ที่ออกแบบให้นักบินอวกาศในอดีต\n\nชาว DOWNLOW บางคนว่า STUG นี้พิสูจน์ว่ามีเอเลี่ยนมุ่งร้ายอยู่จริง แต่มันน่าจะเป็นแค่เครื่องมือเอาชีวิตรอดเผื่อการกลับสู่ชั้นบรรยากาศมีปัญหา\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS[/color]\n\nกด [color=rgb(36, 255, 109)]MISC OR LSTICK[/color] ขณะไม่ได้เล็งเพื่อสลับโหมดยิง\n\nกด [color=rgb(36, 255, 109)]MELEE OR LSTICK[/color] ขณะเล็งเพื่อโจมตีระยะประชิด
+item_desc.2593|นี่คือ HERMES\n\nเขาสงบนิ่งและใจเย็นมาก\n---------------------------\nขณะที่ HERMES อยู่ในกระเป๋าของเธอ:\n\n[color=rgb(255, 0, 0)]ผ่านการทดสอบต่อสู้ระยะประชิด[/color]\n[color=rgb(255, 0, 0)]ผ่านการจำลองการต่อสู้[/color]\n\nแล้วพาเขากลับบ้าน
+script.2651|ป้อนข้อมูลของ [color=rgb(115, 255, 0)]ACTIVE STUG[/color]\nคลิกที่[color=rgb(115, 255, 0)]ไอคอน[/color]เพื่อเพิ่มคะแนน
+script.2652|ป้อนข้อมูลของ [color=rgb(115, 255, 0)]ACTIVE STUG[/color]\nกด [color=rgb(115, 255, 0)]A[/color] เพื่อเพิ่มคะแนน
+script.2687|\n---------------------------\n[color=rgb(36, 255, 109)]GADGET[/color]\n[color=rgb(36, 255, 109)]TOGGLEABLE[/color]\nเติมพลังด้วย FABRICKS สาธารณะ
+script.2748|[color=rgb(115, 255, 0)]ฟองแรงกระแทก[/color]แสดงโพรงบาดแผล\n[color=rgb(115, 255, 0)]แนวกระสุน[/color]แสดงการเจาะทะลุ\nกด [color=rgb(115, 255, 0)]E[/color] เพื่อใส่แผ่นเกราะ
+script.2751|โยก [color=rgb(115, 255, 0)]LEFT JOYSTICK[/color] ซ้ายหรือขวาค้างไว้เพื่อเดิน\nกด [color=rgb(115, 255, 0)]B[/color] ค้างไว้เพื่อวิ่ง\nกด [color=rgb(115, 255, 0)]A[/color] เพื่อกระโดด
+script.2752|[/color] เพื่อเดิน\nกดค้าง [color=rgb(115, 255, 0)]
+script.2753|[/color] เพื่อวิ่ง\n[color=rgb(115, 255, 0)]
+script.2754|[/color] เพื่อกระโดด  [color=rgb(115, 255, 0)]
+script.2755|[/color] เพื่อหมอบ
+script.2756|[/color] เพื่อสลับช่อง UTILITY เป็นมีด
+script.2757|กด [color=rgb(115, 255, 0)]RIGHT JOYSTICK[/color] ลงเพื่อสลับช่อง UTILITY เป็น[color=rgb(115, 255, 0)]มีด[/color]
+script.2759|กด [color=rgb(115, 255, 0)]LEFT MOUSE BUTTON[/color] ค้างไว้เพื่อชักมีด
+script.2760|กด [color=rgb(115, 255, 0)]LEFT TRIGGER[/color] ค้างไว้ พร้อมโยก [color=rgb(115, 255, 0)]RIGHT JOYSTICK[/color] ไปทางใดทางหนึ่งเพื่อชักมีด
+script.2761|เล็งมีดด้วยเมาส์\nกด [color=rgb(115, 255, 0)]SPACE[/color] เพื่อโจมตี  ทุบกระจกให้แตก
+script.2762|เล็งมีดด้วย [color=rgb(115, 255, 0)]RIGHT JOYSTICK[/color]\nกด RIGHT TRIGGER เพื่อแทงกระจก
+script.2763|กดสองครั้ง [color=rgb(115, 255, 0)]
+script.2764|[/color] เพื่อกลิ้งหลบ\nใช้หลบความเสียหายได้
+script.2765|กด [color=rgb(115, 255, 0)]B[/color] สองครั้งเพื่อกลิ้งหลบ  ใช้หลบอันตราย
+script.2766|ถ้าต้องการ[color=rgb(115, 255, 0)]หลบด้วยปุ่มเดียว[/color] ให้เปลี่ยนใน[color=rgb(115, 255, 0)]เมนู ESCAPE[/color] กด [color=rgb(115, 255, 0)]
+script.2767|[/color] เพื่อใช้งานประตู
+script.2768|กด [color=rgb(115, 255, 0)]ขึ้น[/color]ที่ [color=rgb(115, 255, 0)]$[/color] เพื่อใช้งานประตู
+script.2769|หา [color=rgb(115, 255, 0)]MEDIPLAST[/color]
+script.2770|หา [color=rgb(115, 255, 0)]MEDIPLAST[/color] \nมองหาจุดที่มีประกายวิบวับ
+script.2771| หรือ TAB[/color] เพื่อเปิดกระเป๋า
+script.2772|กดปุ่ม [color=rgb(115, 255, 0)]*[/color] เพื่อเปิดกระเป๋า
+script.2773|ลาก [color=rgb(115, 255, 0)]MEDIPLAST[/color] ไปใส่ช่อง[color=rgb(115, 255, 0)] QUICKSLOT[/color]ช่องใดช่องหนึ่ง
+script.2775|ผิดช่อง  ย้าย [color=rgb(115, 255, 0)]MEDIPLAST[/color] ไปใส่ช่อง[color=rgb(115, 255, 0)] QUICKSLOT[/color]ที่ลูกศรสีเขียวชี้
+script.2776|, ESCAPE[/color] หรือ [color=rgb(115, 255, 0)]TAB[/color] เพื่อปิดกระเป๋า
+script.2777|กด [color=rgb(115, 255, 0)]*[/color] หรือ [color=rgb(115, 255, 0)]B[/color] เพื่อปิดกระเป๋า
+script.2778|กด[color=rgb(115, 255, 0)]ตัวเลข[/color]เหนือช่อง QUICKSLOT เพื่อใช้ไอเทมในช่องนั้น
+script.2779|กด [color=rgb(115, 255, 0)]$[/color] เหนือช่อง QUICKSLOT เพื่อใช้ไอเทมในช่องนั้น
+script.2780|โธ่ เธอนี่ทำ TUTORIAL นี้ยากจริง ๆ... ก็ได้  กด [color=rgb(115, 255, 0)]
+script.2781| หรือ TAB[/color] เพื่อปิดกระเป๋า
+script.2782|โธ่ เธอนี่ทำ TUTORIAL นี้ยากจริง ๆ... กด [color=rgb(115, 255, 0)]*[/color] หรือ [color=rgb(115, 255, 0)]B[/color] เพื่อปิดกระเป๋า
+script.2783|เธอได้รับ[color=rgb(255, 0, 0)]บาดเจ็บที่ขา[/color]จากกับดัก\nเธอวิ่งหรือกลิ้งหลบไม่ได้\nเปิดกล่องพยาบาล
+script.2784|ไอเทมที่[color=rgb(115, 255, 0)]เก็บได้[/color]จะมี[color=rgb(115, 255, 0)]ประกาย[/color]อยู่บนพื้น\nเปิดกระเป๋าโดยกด [color=rgb(115, 255, 0)]
+script.2785| หรือ TAB[/color]
+script.2786|ไอเทมที่[color=rgb(115, 255, 0)]เก็บได้[/color]จะมี[color=rgb(115, 255, 0)]ประกาย[/color]อยู่บนพื้น\nกดปุ่ม [color=rgb(115, 255, 0)]*[/color] เพื่อเปิดกระเป๋า
+script.2788|กดปุ่ม [color=rgb(115, 255, 0)]*[/color] เพื่อปิดกระเป๋า แล้วใช้งานกล่องพยาบาลบนผนัง..
+script.2789|ไอเทมที่[color=rgb(115, 255, 0)]เก็บได้[/color]จะมี[color=rgb(115, 255, 0)]ประกาย[/color]อยู่บนพื้น\nเปิดกระเป๋าโดยกด [color=rgb(115, 255, 0)]B[/color]
+script.2790|ไอเทมที่[color=rgb(115, 255, 0)]เก็บได้[/color]จะมี[color=rgb(115, 255, 0)]ประกาย[/color]อยู่บนพื้น\nเปิดกระเป๋าโดยกด [color=rgb(115, 255, 0)]*[/color]
+script.2791|เปิดกระเป๋าโดยกด [color=rgb(115, 255, 0)]
+script.2792| หรือ TAB[/color]
+script.2793|เปิดกระเป๋าโดยกด [color=rgb(115, 255, 0)]*[/color]
+script.2794|เธอได้รับ[color=rgb(255, 0, 0)]บาดเจ็บที่ขา[/color]จากกับดัก  เธอวิ่งหรือกลิ้งหลบไม่ได้\nเปิดกล่องพยาบาล
+script.2795|คลิกแล้วลาก [color=rgb(115, 255, 0)]PAINKILLER[/color] จากพื้นเข้ากระเป๋า
+script.2796|กด [color=rgb(115, 255, 0)]LB[/color] หรือ [color=rgb(115, 255, 0)]RB[/color] เพื่อเข้าโหมดเก็บของ\nกด [color=rgb(115, 255, 0)]A[/color] เพื่อเก็บ PAINKILLER\nกด [color=rgb(115, 255, 0)]$[/color] เพื่อย้าย [color=rgb(115, 255, 0)]A[/color] เพื่อวาง
+script.2797|ผิดช่อง  ย้าย [color=rgb(115, 255, 0)]PAINKILLER[/color] จาก QUICKSLOT เข้ากระเป๋า
+script.2798|คลิกขวาที่ [color=rgb(115, 255, 0)]PAINKILLER[/color] แล้ว[color=rgb(115, 255, 0)]คลิกซ้าย[/color]ที่ USE
+script.2799|วางเคอร์เซอร์สีเหลืองบน [color=rgb(115, 255, 0)]PAINKILLER[/color] แล้วกด [color=rgb(115, 255, 0)]A[/color] ค้างเพื่อใช้
+script.2800|PAINKILLERS ช่วยให้เธอเมินข้อจำกัดจากอาการบาดเจ็บบางอย่างได้ แลกกับ[color=rgb(255, 0, 0)]ความเสียหายเล็กน้อย[/color]  กด  [color=rgb(115, 255, 0)]
+script.2801|PAINKILLERS ช่วยให้เธอเมินข้อจำกัดจากอาการบาดเจ็บบางอย่างได้ แลกกับ[color=rgb(255, 0, 0)]ความเสียหายเล็กน้อย[/color]  กด [color=rgb(115, 255, 0)]*[/color]
+script.2803|PAINKILLERS ระงับข้อจำกัดจากอาการบาดเจ็บบางอย่าง  ถึงเธอจะไม่ทำตามคำแนะนำก็เถอะ  กด [color=rgb(115, 255, 0)]*[/color]
+script.2805|หา [color=rgb(115, 255, 0)]INJURY KIT[/color] บนพื้น\nมองหาจุดที่มีประกาย  [color=rgb(115, 255, 0)]กด
+script.2806| หรือ TAB[/color] เพื่อเปิดกระเป๋า
+script.2807|หา [color=rgb(115, 255, 0)]INJURY KIT[/color] บนพื้น\nมองหาจุดที่มีประกาย  [color=rgb(115, 255, 0)]กด *[/color] เพื่อเปิดกระเป๋า
+script.2808|เก็บ [color=rgb(115, 255, 0)]INJURY KIT[/color] แล้วใช้รักษาอาการบาดเจ็บ
+script.2809|กดค้าง [color=rgb(115, 255, 0)]
+script.2810|[/color] เพื่อเก็บของ
+script.2811|กด [color=rgb(115, 255, 0)]ขึ้น[/color]ค้างที่ [color=rgb(115, 255, 0)]$[/color] เพื่อเก็บของ
+script.2812|[color=rgb(115, 255, 0)]คลิกซ้ายแล้วลาก[/color]กระสุนไปใส่ RIG\nการ[color=rgb(115, 255, 0)]รีโหลด[/color]ด้วยกระสุนที่ไม่ได้อยู่ใน RIG จะ[color=rgb(200, 0, 0)]ช้ากว่า[/color]
+script.2813|หยิบกระสุนไปใส่ใน RIG ของเธอ\nการ[color=rgb(115, 255, 0)]รีโหลด[/color]ด้วยกระสุนที่ไม่ได้อยู่ใน RIG จะ[color=rgb(200, 0, 0)]ช้ากว่า[/color]
+script.2814|RIG ใส่ได้เฉพาะกระสุนกับแม็กกาซีน\nกด [color=rgb(115, 255, 0)]
+script.2815|RIG ใส่ได้เฉพาะกระสุนกับแม็กกาซีน\nกดปุ่ม [color=rgb(115, 255, 0)]*[/color] หรือ [color=rgb(115, 255, 0)]B[/color] เพื่อปิดกระเป๋า
+script.2817|ลาก [color=rgb(115, 255, 0)]ROTORSTUG[/color] ไปใส่[color=rgb(115, 255, 0)]ช่องอาวุธ[/color]ที่มุมขวาล่าง
+script.2818|หยิบ [color=rgb(115, 255, 0)]ROTORSTUG[/color] ไปใส่[color=rgb(115, 255, 0)]ช่องอาวุธ[/color]ทางขวา
+script.2819|กดปุ่ม [color=rgb(115, 255, 0)]*[/color] เพื่อปิดกระเป๋า
+script.2820|กด [color=rgb(115, 255, 0)]RIGHT MOUSE BUTTON[/color] ค้างไว้เพื่อเล็ง STUG
+script.2821|โยก [color=rgb(115, 255, 0)]RIGHT JOYSTICK[/color] ค้างไว้ทางใดก็ได้เพื่อเล็ง STUG
+script.2822|กด [color=rgb(115, 255, 0)]LEFT MOUSE BUTTON[/color] เพื่อยิง  ยิงให้โดน[color=rgb(115, 255, 0)]เป้า 8 อัน[/color]
+script.2823|ขณะเล็ง กด [color=rgb(115, 255, 0)]RIGHT TRIGGER[/color] เพื่อยิง STUG  ยิงโดนเป้า 8 อันเพื่อไปต่อ
+script.2824|[/color] เพื่อ[color=rgb(115, 255, 0)]รีโหลด[/color]  STUGS บางรุ่นต้องใช้[color=rgb(115, 255, 0)]แม็กกาซีน[/color]
+script.2825|กด [color=rgb(115, 255, 0)]X[/color] เพื่อ[color=rgb(115, 255, 0)]รีโหลด[/color]  STUGS บางรุ่นต้องใช้[color=rgb(115, 255, 0)]แม็กกาซีน[/color]
+script.2826|เก็บ [color=rgb(115, 255, 0)]FABRICK[/color] ทั้งสองก้อนบนพื้น\nลากก้อนหนึ่งไปวางทับอีกก้อนแล้ว[color=rgb(115, 255, 0)]กดค้าง[/color]เพื่อ[color=rgb(115, 255, 0)]รวมกอง[/color]
+script.2827| หรือ TAB[/color] ขณะอยู่ที่ FABRICATOR
+script.2828|กด [color=rgb(115, 255, 0)]*[/color] ขณะอยู่ที่ FABRICATOR
+script.2829|กด [color=rgb(115, 255, 0)]*[/color] เพื่อปิดกระเป๋า
+script.2831| หรือ TAB[/color] ขณะอยู่ใกล้ FABRICATOR
+script.2832|กด [color=rgb(115, 255, 0)]*[/color] ขณะอยู่ใกล้ FABRICATOR
+script.2833|ลากแล้ววาง [color=rgb(115, 255, 0)]FABRICK[/color] บนช่อง BANK ที่มุมขวาบน
+script.2834|ขณะอยู่ใกล้ [color=rgb(115, 255, 0)]FABRICATOR[/color] วางเคอร์เซอร์บน FABRICKS แล้วกด [color=rgb(115, 255, 0)]A[/color] ค้างเพื่อเก็บเข้า BANK
+script.2835|BANK เก็บ [color=rgb(115, 255, 0)]FABRICKS[/color] ทั้งหมดของเธอ  ดึงออกมาได้โดยดับเบิลคลิกที่ไอคอน
+script.2836|[color=rgb(36, 255, 251)]จุดสีฟ้า[/color]แสดงไอเทมที่ยังไม่ได้สแกน\nหยิบ ROTORSTUG ไปวางบนเครื่องสแกน
+script.2837|ไอเทมที่สแกนแล้วพิมพ์ใหม่ได้ถ้ามี FABRICKS พอ\nกด [color=rgb(115, 255, 0)]
+script.2838| หรือ TAB[/color] เพื่อปิดแล้วไปต่อ
+script.2839|ไอเทมที่สแกนแล้วพิมพ์ใหม่ได้ถ้ามี FABRICKS พอ\nกด [color=rgb(115, 255, 0)]*[/color] เพื่อปิดแล้วไปต่อ
+script.2840|[/color] เพื่อสลับช่อง UTILITY เป็นไฟฉาย
+script.2841|กด [color=rgb(115, 255, 0)]RIGHT JOYSTICK[/color] ลงเพื่อสลับช่อง UTILITY เป็นไฟฉาย
+script.2842|[color=rgb(115, 255, 0)]กดคลิกซ้ายค้าง[/color]เพื่อใช้ไฟฉาย
+script.2843|กด [color=rgb(115, 255, 0)]LEFT TRIGGER[/color] ค้าง พร้อมโยก [color=rgb(115, 255, 0)]RIGHT JOYSTICK[/color] ค้างไว้ทางใดก็ได้
+script.2845|ใช้ [color=rgb(115, 255, 0)]RIGHT JOYSTICK[/color] เพื่อเล็งแสงไฟ
+script.2846| หรือ TAB[/color] เพื่อดูเวลา EXTRACT ของ MONORAIL
+script.2847|กด [color=rgb(115, 255, 0)]*[/color] เพื่อดูเวลา EXTRACT ของ MONORAIL
+script.2848|MONORAIL มาถึงแล้ว  กด [color=rgb(115, 255, 0)]
+script.2849| หรือ TAB[/color] แล้วไปต่อ
+script.2850|MONORAIL มาถึงแล้ว!  กด [color=rgb(115, 255, 0)]*[/color] แล้วไปต่อ
+script.2851|เธอพลาด EXTRACT ของ MONORAIL\nมันจะกลับมาทุก 10 นาที \n[color=rgb(115, 255, 0)]หาทาง EXTRACT อื่น[/color]...
+script.2852|ยังมีทาง EXTRACT อื่นอีก แต่ [color=rgb(115, 255, 0)]MONORAIL[/color] ปลอดภัยที่สุดเสมอ
+script.2853|[color=rgb(115, 255, 0)]EXTRACT ที่ไม่ใช่ MONORAIL[/color]จะมี[color=rgb(115, 255, 0)]เงื่อนไข[/color]\nหาและเก็บ [color=rgb(115, 255, 0)]FABRICK[/color] แล้ว [color=rgb(115, 255, 0)]EXTRACT[/color]
+script.2892|นี่คือ HERMES\n\nเขาสงบนิ่งและใจเย็นมาก\n---------------------------\nขณะที่ HERMES อยู่ในกระเป๋าของเธอ:\n\n[color=rgb(36, 255, 109)]ผ่านการทดสอบต่อสู้ระยะประชิด[/color]\n[color=rgb(255, 0, 0)]ผ่านการจำลองการต่อสู้[/color]\n\nแล้วพาเขากลับบ้าน
+script.2893|นี่คือ HERMES\n\nเขาสงบนิ่งและใจเย็นมาก\n---------------------------\nขณะที่ HERMES อยู่ในกระเป๋าของเธอ:\n\n[color=rgb(255, 0, 0)]ผ่านการทดสอบต่อสู้ระยะประชิด[/color]\n[color=rgb(36, 255, 109)]ผ่านการจำลองการต่อสู้[/color]\n\nแล้วพาเขากลับบ้าน
+script.2894|นี่คือ HERMES\n\nเขาสงบนิ่งและใจเย็นมาก\n---------------------------\nขณะที่ HERMES อยู่ในกระเป๋าของเธอ:\n\n[color=rgb(36, 255, 109)]ผ่านการทดสอบต่อสู้ระยะประชิด[/color]\n[color=rgb(36, 255, 109)]ผ่านการจำลองการต่อสู้[/color]\n\nพา HERMES กลับไปที่ซ่อนของเขา
+# magazines (generated from the English template)
+item_desc.2050|แม็กกาซีนสำหรับ CARAVANEER BOLTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS.[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2052|แม็กกาซีนสำหรับ DEFENDER SHORTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]LIGHT ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2054|แม็กกาซีนสำหรับ GORESTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2056|แม็กกาซีนสำหรับ M22 ASSAULTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS.[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2058|แม็กกาซีนสำหรับ MA38 ASSAULTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2060|แม็กกาซีนสำหรับ MIG SHORTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MINI ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2062|แม็กกาซีนสำหรับ M.3 SHORTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]LIGHT ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2064|แม็กกาซีนสำหรับ T34 MOTORSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MINI ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2066|แม็กกาซีนสำหรับ TITUS AUTOSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]LIGHT ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2102|แม็กกาซีนสำหรับ TITAN SHORSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2212|แม็กกาซีนสำหรับ LU-3G SOFTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2216|แม็กกาซีนสำหรับ E-511 SOFTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MINI ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2224|แม็กกาซีนสำหรับ DEADEYE LONGSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2228|แม็กกาซีนสำหรับ EPOCH SUBSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]LIGHT ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2234|แม็กกาซีนสำหรับ DT4 ASSAULTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2238|แม็กกาซีนสำหรับ THOR MOTORSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2242|แม็กกาซีนสำหรับ CANINE SHORTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2250|แม็กกาซีนสำหรับ VL77 SHORTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MINI ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2254|แม็กกาซีนสำหรับ DOUBLETAP SHORTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]LIGHT ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2331|แม็กกาซีนสำหรับ RA-15\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS.[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2337|แม็กกาซีนสำหรับ WZI\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]LIGHT ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2343|แม็กกาซีนสำหรับ MOTOWN AUTOSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MINI ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2347|แม็กกาซีนสำหรับ SK77 ASSAULTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS.[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2351|แม็กกาซีนสำหรับ SEC-9 SHORTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS.[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2361|แม็กกาซีนสำหรับ DUQ SHORTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MINI ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2365|แม็กกาซีนสำหรับ PHALANX PDS\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2371|แม็กกาซีนสำหรับ SHIVAH AUTOSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]LIGHT ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2377|แม็กกาซีนสำหรับ MA41 ASSAULTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2381|แม็กกาซีนสำหรับ TEMPEST AUTOSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MINI ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2463|แม็กกาซีนสำหรับ TN-AUTO SCATTERSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]SCATTERSTUG SHELLS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2483|แม็กกาซีนสำหรับ DRAKE SHORTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]LIGHT ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2487|แม็กกาซีนสำหรับ TS90 PDS\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MINI ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2491|แม็กกาซีนสำหรับ CROSS SUBSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2515|แม็กกาซีนสำหรับ RANSOM\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS.[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2531|แม็กกาซีนสำหรับ ENFORCER SHORTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2539|แม็กกาซีนสำหรับ SAL BATTLESTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS.[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2543|แม็กกาซีนสำหรับ TUNA ASSAULTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]LIGHT ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2547|แม็กกาซีนสำหรับ WAYFINDER BOLTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]LIGHT ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2551|แม็กกาซีนสำหรับ GAIGA SCATTERSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]SCATTERSTUG SHELLS[/color]\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2555|แม็กกาซีนสำหรับ HANWOO ASSAULTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2559|แม็กกาซีนสำหรับ PULSAR MOTORSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MINI ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2565|แม็กกาซีนสำหรับ X88 ASSAULTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]MEDIUM ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2569|แม็กกาซีนสำหรับ BLIXT-57 ASSAULTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2581|แม็กกาซีนสำหรับ AS-BAAL SOFTSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ
+item_desc.2611|แม็กกาซีนสำหรับ PEKYAM MOTORSTUG\n---------------------------\nใช้ได้กับ [color=rgb(36, 255, 109)]HEAVY ROUNDS[/color]\n\nลากกระสุนมาวางบนแม็กกาซีนเพื่อบรรจุ

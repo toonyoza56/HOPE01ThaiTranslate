@@ -1,0 +1,6 @@
+id,category,english,thai,note
+dialogue.0627,dialogue,"IT'S A COMBINATION OF 14 HERBS AND SPICES.\nWHICH ONES? IT'S A HORSE GIRL SECRET.","สมุนไพรกับเครื่องเทศ 14 ชนิด\nชนิดไหนบ้าง? ความลับของสาวม้า","shortened: the pixel-font dialogue box fits 3 lines"
+dialogue.0916,dialogue,"... ALL MY SUCCESSES CAUGHT UP WITH ME... MY BCS SQUEEZE GOT TAGGED AND THEY CUFFED ME FOR FAKING CONDUCT SCORES...","...ความสำเร็จย้อนมาเล่นงานผม แฟนผมใน BCS โดนจับได้ ผมเลยโดนจับข้อหาปลอมคะแนนความประพฤติ...","shortened: the pixel-font dialogue box fits 3 lines"
+option.0458,option,"""FEAR DARKENS THE HUMAN PATH, FAITH IS THE LIGHT.""","""ความกลัวทำให้ทางมืดมน ศรัทธาคือแสงสว่าง""","shortened: choices fit one line"
+option.0459,option,"""SHEPHERD OF MAN MUST BE SCIENCE, LEST THE WOLVES FEAST.""","""วิทยาศาสตร์ต้องนำทางมนุษย์ ไม่งั้นหมาป่าได้กินเลี้ยง""","shortened: choices fit one line"
+option.0557,option,"IF I PASS ALL THESE TESTS, WILL MR. SHASTA HELP ME FIND HAB 01?","ถ้าผ่านหมด MR. SHASTA จะช่วยหา HAB 01 ไหม?","shortened: choices fit one line"
