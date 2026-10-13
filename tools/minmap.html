@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>HOPE 01 minified name map</title>
+<style>body{font:13px monospace;margin:16px;background:#111;color:#ddd}input{width:520px}pre{white-space:pre-wrap}</style>
+<h3>Minified name map (old c3main.js → new c3main.js)</h3>
+<p>Every game update re-minifies c3main.js. This lines up the two files token by token (identifiers
+masked, 30-token windows that are unique in both files) and votes old name → new name. Votes can be
+noisy for names that sit next to each other: trust the candidate whose <b>usage count</b> (<code>.name(</code>
+and <code>}name(</code>) equals the old name's.</p>
+<p>old <input id="old" value="/backup/original-OLD/scripts/c3main.js"><br>
+new <input id="new" value="/game/scripts/c3main.js"><br>
+names <input id="names" value="RLt b8t X8t Z8t Q8t t6t uW oy gy dT Qg Xz Cz pZ iq Bf jFt QF BV">
+<button onclick="run()">Map</button></p>
+<pre id="out"></pre>
+<script>
+const out = document.getElementById("out");
+async function run() {
+	out.textContent = "loading ...";
+	const [A, B] = await Promise.all(["old", "new"].map(id => fetch(document.getElementById(id).value).then(r => { if (!r.ok) throw new Error(r.url + " " + r.status); return r.text(); })));
+	const tok = s => s.match(/#?[A-Za-z_$][\w$]*|\d+(\.\d+)?|"(?:[^"\\]|\\.)*"|\S/g);
+	const KW = new Set("var let const function return if else for while do switch case break continue new this typeof instanceof in of null true false void delete try catch finally throw class extends super static get set async await yield default self Math Object Array Number String Map Set JSON isFinite length prototype".split(" "));
+	const isMin = t => /^#?[A-Za-z_$][\w$]*$/.test(t) && !KW.has(t);
+	const K = 30;
+	const windows = toks => {
+		const sk = toks.map(t => isMin(t) ? "I" : t), m = new Map();
+		for (let i = 0; i + K <= sk.length; ++i) { const h = sk.slice(i, i + K).join(" "); m.set(h, m.has(h) ? -1 : i); }
+		return m;
+	};
+	const ta = tok(A), tb = tok(B), wa = windows(ta), wb = windows(tb), votes = new Map();
+	for (const [h, i] of wa) {
+		const j = wb.get(h);
+		if (i < 0 || j === undefined || j < 0) continue;
+		for (let k = 0; k < K; ++k) {
+			const a = ta[i + k];
+			if (!isMin(a)) continue;
+			let v = votes.get(a); if (!v) votes.set(a, v = new Map());
+			v.set(tb[j + k], (v.get(tb[j + k]) || 0) + 1);
+		}
+	}
+	const count = (s, n) => s.split("." + n + "(").length - 1 + s.split("}" + n + "(").length - 1;
+	const lines = [];
+	for (const n of document.getElementById("names").value.split(/\s+/).filter(Boolean)) {
+		const v = [...(votes.get(n) || [])].sort((x, y) => y[1] - x[1]).slice(0, 4);
+		const want = count(A, n);
+		lines.push(`${n.padEnd(5)} (uses ${String(want).padStart(4)}) -> ` + (v.length ? v.map(([c, k]) => `${c} [votes ${k}, uses ${count(B, c)}${count(B, c) === want ? " ✓" : ""}]`).join("  ") : "?"));
+	}
+	out.textContent = lines.join("\n");
+}
+</script>

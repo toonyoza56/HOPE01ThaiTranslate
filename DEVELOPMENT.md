@@ -45,11 +45,27 @@ powershell -ExecutionPolicy Bypass -File tools\serve.ps1     # dev server http:/
   The main menu buttons are widened 1.8× (`WIDEN`).
 - Tuning knobs: `build.html?size=1.6&line=1.35` (Thai size vs. English cap height, line spacing).
 
+## After a game update
+A Steam update puts the English `data.json` / `c3main.js` back (the Thai font sheets stay).
+1. Move `backup/original` aside (e.g. `backup/original-<date>`) and copy the new game files in its place.
+   Do **not** run `uninstall.ps1` first - it would put the old game files back.
+2. Save `work/strings.json` aside, run extract, and list strings that have no translation yet
+   (compare with the saved file: most are reworded English, so the old Thai can be reused).
+   New rows go in a new `translations/th-0NN.csv`.
+3. Run build and read the warnings. Each update re-minifies `c3main.js`:
+   - the save/load and instance-variable hooks are regexes with wildcard names (should keep working);
+   - the engine methods the save/load runtime calls are in `MIN` in `build.html` - if the build says
+     they are missing, find the new names with `tools/minmap.html` (old vs new c3main.js);
+   - the SpriteFont "Set scale" action index is looked up by SID (`SET_SCALE_SIDS`).
+4. Test in `/play`, install, bump `VERSION.txt`, make a release (the v1.0.2 installer refuses to install
+   on a game build whose hooks it can't place, so players need the new release).
+
 ## Files
 ```
 tools/serve.ps1       dev server (/game = original game, read-only · /play = build over the game · POST /work, /build)
 tools/extract.html    extract text + glossary
 tools/build.html      put translations in + build font sheets
+tools/minmap.html     old -> new minified names after a game update (for MIN in build.html)
 tools/preview.html    SpriteFont text preview at 1080p
 tools/capture.js      full-resolution screenshot from the game in /play
 tools/install.ps1     install into the game (with backup) · tools/uninstall.ps1

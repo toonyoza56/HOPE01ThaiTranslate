@@ -264,6 +264,16 @@ These are empirical rules. Please don't "simplify" them away.
 6. **The dialogue text box** is `ui_dialogue_textframe_text` (236×62 after patch). The frame is the Sprite
    `ui_dialogue_textframe` (315×60, at y 50..110). Text is set with the SpriteFont typewriter
    (ACE 246), inside the function `DialogueShow(text, profile)`. Choices come from `DialogueBoxChoices(o1..o4)`.
+7. **Script `"tick"` runs BEFORE the event sheet, `"tick2"` after it** (checked in `c3main.js`: `MZt()`
+   dispatches the script `tick`, then `GZt()` runs the event sheet and only then dispatches `tick2`).
+   Anything writing to an object the game also writes to must run on **`tick2`**, or the game overwrites
+   it in the same frame. The scroll view used `tick`: the item panel sets its description only when it
+   changes, so that worked, but the **upgrade panel re-sets it every tick**, so the scrollbar moved
+   while the text never did (fixed 2026-09-23, v1.0.1).
+8. **One box, two panels.** `item_stext_description` is a *single* instance (placed at 438,126 180×160
+   on the `UI` layer) and serves as the tooltip for both items and upgrades; the game moves and resizes
+   it. Nothing about it may be baked in at build time - the visible line count and the scrollbar
+   position are measured from the live instance (`rowsOf`, `barX` in `scrollRuntime`).
 
 ---
 

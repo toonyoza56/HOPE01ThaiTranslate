@@ -56,9 +56,10 @@ const HEIGHT_CAP = {
 // Thai needs 14 (see FONT_TUNING), so long texts scroll (SCROLL_BOXES); the box is the item panel's
 // inner area (y 121..297) and the engine does not draw lines below it, which masks the rest.
 const HEIGHT_FIXED = { item_stext_description: 176 };
-// Text boxes that scroll (arrow keys / mouse wheel over the box) when the text is taller than the box;
-// a pixel scrollbar is drawn over the canvas at barX (layout px). See scrollRuntime().
-const SCROLL_BOXES = { item_stext_description: { barX: 620 } };
+// Text boxes that scroll (arrow keys / mouse wheel / right stick) when the text is taller than the
+// box; a pixel scrollbar is drawn over the canvas just right of the box. The item panel and the
+// upgrade panel share this one object, so everything is measured from it at runtime. See scrollRuntime().
+const SCROLL_BOXES = { item_stext_description: {} };
 const LINE_FACTOR =+(new URLSearchParams(location.search).get("line") || 1.35); // line advance vs original char height
 // Per-type font overrides (a type listed here gets its own sheet):
 //   size   - Thai font px per English cap-height px (instead of THAI_SIZE)
@@ -306,13 +307,29 @@ async function build() {
 }
 
 // Event sheet actions are [objectIndex, aceIndex, behavior, sid, ?, ?, params]; aceIndex points
-// into the runtime's function table, 62 = SpriteFont "Set scale" in this build (checked in game:
-// menu hover sets 1.1, leave sets 1). A number parameter is [0, [exprIndex]] into the
-// expression table self.rwt in c3main.js, where constants look like ()=>1.1.
-const ACE_SPRITEFONT_SET_SCALE = 62;
+// into the runtime's function table and moves when an update adds plugins/ACEs (62 on 09-23,
+// 69 on 10-07). The SIDs of known "Set scale" actions do not change, so the index is read from
+// them: the main menu hover (sets 1.1, checked in game) and leave (sets 1).
+// A number parameter is [0, [exprIndex]] into the expression table self.rwt in c3main.js, where
+// constants look like ()=>1.1.
+const SET_SCALE_SIDS = [651754103865984, 917024817865011];
+
+function findSetScaleAce(P) {
+	const ids = new Set();
+	const walk = x => {
+		if (!Array.isArray(x)) return;
+		if (x.length === 7 && typeof x[1] === "number" && x[2] === null && SET_SCALE_SIDS.includes(x[3])) { ids.add(x[1]); return; }
+		x.forEach(walk);
+	};
+	P[6].forEach(walk);
+	return ids.size === 1 ? [...ids][0] : undefined;
+}
 
 function patchScaleActions(P, js, upscaleOf, warnings) {
 	const T = P[3];
+	const ACE_SPRITEFONT_SET_SCALE = findSetScaleAce(P);
+	if (ACE_SPRITEFONT_SET_SCALE === undefined) { warnings.push("SpriteFont Set scale action not found by SID - scale actions not adjusted (menu hover will be too big)"); return js; }
+	log(`SpriteFont Set scale = ACE ${ACE_SPRITEFONT_SET_SCALE}`);
 	// A family can be patched when all its members got the same K.
 	const kOf = new Map(upscaleOf);
 	for (const [fam, ...members] of P[4]) {
@@ -359,15 +376,31 @@ function patchScaleActions(P, js, upscaleOf, warnings) {
 //    shifted exactly like build() does for the layout instances.
 //  - save: a patched font is written in the original font's units (+ `thai: 1`), so the save
 //    still loads correctly after uninstalling the mod.
-// Minified names below are from this build's c3main.js (checked 2026-09-22):
-//   sdk inst: RLt.b8t() = font settings (X8t cw, Z8t ch, Q8t charset, t6t spacing data)
-//   uW() = world info (cI y, pI set y, dT height, Qg set height, Jj origin y, Cj bbox changed)
-const SAVE_HOOK_FIND = "t.tw={st:this.F8t,en:this.H8t,l:this.U8t}),t}yI(t){if(this.V8t(),";
-const SAVE_HOOK_REPLACE = "t.tw={st:this.F8t,en:this.H8t,l:this.U8t}),self.__thaiSave?self.__thaiSave(this,t):t}yI(t){t=self.__thaiLoad?self.__thaiLoad(this,t):t;if(this.V8t(),";
+// Minified engine names used by the runtime code below. Every game update re-minifies c3main.js
+// and may rename them: find the new names with tools/minmap.html (old vs new c3main.js), then
+// check each with a usage count (`grep -o "\.name(" | wc -l` must equal the old name's count).
+// Checked against the game build of 2026-10-07 (the 2026-09-23 names are in the comments).
+const MIN = {
+	font: "RLt", settings: "b8t",          // sdk inst .RLt.b8t() = font settings
+	cw: "X8t", ch: "Z8t", cs: "Q8t", sd: "t6t", // settings: cell w / cell h / charset / spacing data
+	wi: "uW",                              // world info
+	y: "oy", setY: "gy",                   // 09-23: cI, pI
+	h: "dT", setH: "Qg",
+	originY: "Xz", bboxChanged: "Cz",      // 09-23: Jj, Cj
+	inst: "pZ", objectClass: "iq", name: "Bf" // sdk inst -> instance -> object class -> name
+};
+// The SpriteFont SaveToJson ... LoadFromJson boundary. Only SpriteFont returns right after the
+// typewriter `tw` field (Text saves more after it), so this matches once. Property and method
+// names are wildcards: they change with every update.
+const SAVE_HOOK_RE = /(t\.tw=\{st:this\.[\w$]+,en:this\.[\w$]+,l:this\.[\w$]+\}\),)t(\}[\w$]+\(t\)\{)(if\(this\.[\w$]+\(\),)/g;
+const SAVE_HOOK_REPLACE = "$1self.__thaiSave?self.__thaiSave(this,t):t$2t=self.__thaiLoad?self.__thaiLoad(this,t):t;$3";
 
 function patchSaveLoad(js, fontInfos, grownBy, warnings) {
-	const parts = js.split(SAVE_HOOK_FIND);
-	if (parts.length !== 2) { warnings.push(`SpriteFont save/load code not found (${parts.length - 1} matches) - old saves will show no Thai text`); return js; }
+	const matches = js.match(SAVE_HOOK_RE) || [];
+	if (matches.length !== 1) { warnings.push(`SpriteFont save/load code not found (${matches.length} matches) - old saves will show no Thai text`); return js; }
+	const defined = (k, n) => k === "font" ? js.includes(`this.${n}=`) : js.includes(`}${n}(`); // font is a field, the rest are methods
+	const missing = Object.entries(MIN).filter(([k, n]) => !defined(k, n)).map(([k, n]) => `${k}=${n}`);
+	if (missing.length) { warnings.push(`minified names not defined in c3main.js: ${missing.join(", ")} - update MIN (tools/minmap.html); old saves will show no Thai text`); return js; }
 	log(`save/load hook: ${fontInfos.length} fonts`);
 	const runtime = `
 ;(() => {
@@ -375,45 +408,53 @@ function patchSaveLoad(js, fontInfos, grownBy, warnings) {
 	const CAPS = ${JSON.stringify(HEIGHT_CAP)};
 	const FIXED = ${JSON.stringify(HEIGHT_FIXED)};
 	const GROWN = ${JSON.stringify(grownBy)};
+	const M = ${JSON.stringify(MIN)};
 	// Several types can end up with identical new font settings from different originals, so
-	// fonts are found by object type name (sdk inst -> pZ() instance -> iq() object class -> Bf() name).
+	// fonts are found by object type name (sdk inst -> instance -> object class -> name).
+	const typeName = inst => inst[M.inst]()[M.objectClass]()[M.name]();
 	const byType = new Map();
 	FONTS.forEach(f => f.types.forEach(n => byType.set(n, f)));
-	const fontOf = inst => { try { return byType.get(inst.pZ().iq().Bf()); } catch (e) { return undefined; } };
+	const fontOf = inst => { try { return byType.get(typeName(inst)); } catch (e) { return undefined; } };
+	// World info of an instance, with readable names.
+	const box = inst => {
+		const wi = inst[M.wi]();
+		return { y: () => wi[M.y](), setY: v => wi[M.setY](v), h: () => wi[M.h](), setH: v => wi[M.setH](v),
+			originY: () => wi[M.originY](), changed: () => wi[M.bboxChanged]() };
+	};
 	const VALIGN = { top: 0, center: 1, bottom: 2 };
 	self.__thaiLoad = (inst, t) => {
 		try {
-			const font = inst.RLt.b8t(), f = fontOf(inst);
-			if (!f || !t || font.X8t() !== f.cw || font.Q8t() !== f.cs) return t;
+			const font = inst[M.font][M.settings](), f = fontOf(inst);
+			if (!f || !t || font[M.cw]() !== f.cw || font[M.cs]() !== f.cs) return t;
 			if (t.cs === f.cs && t.cw === f.cw && t.sd === f.sd) return t;
 			self.__thaiConverted = (self.__thaiConverted || 0) + 1; // debug: fonts converted from a save
 			// Saved by an earlier build of this mod (no save hook): already in the new font's units.
 			const modUnits = !t.thai && t.cw !== f.cw0;
 			const scale0 = t.csc;
-			const n = Object.assign({}, t, { cw: font.X8t(), ch: font.Z8t(), cs: font.Q8t(), sd: font.t6t(), csp: 0 });
+			const n = Object.assign({}, t, { cw: font[M.cw](), ch: font[M.ch](), cs: font[M.cs](), sd: font[M.sd](), csp: 0 });
 			if (!modUnits) { n.csc = t.csc / f.k; n.lh = t.lh + f.lhx; }
 			delete n.thai; delete n.gd;
-			const wi = inst.uW();
+			const wi = box(inst), type = typeName(inst);
 			// A save made with the mod records how much its box was grown/moved (gd): undo that,
 			// then grow again with this build's rules (sizes may have changed between builds).
-			if (t.thai && Array.isArray(t.gd)) { wi.Qg(wi.dT() - t.gd[0]); wi.pI(wi.cI() - t.gd[1]); }
+			if (t.thai && Array.isArray(t.gd)) { wi.setH(wi.h() - t.gd[0]); wi.setY(wi.y() - t.gd[1]); }
 			// Saved by a mod build from before gd (2026-09-22 tests): its box size is unknown, so go back
 			// to the type's original height around the same centre, then grow like an original save.
-			const g0 = GROWN[inst.pZ().iq().Bf()];
+			const g0 = GROWN[type];
 			const noGd = t.thai && !Array.isArray(t.gd) && g0;
-			if (noGd) { const oy0 = wi.Jj(), h1 = wi.dT(), c = wi.cI() - oy0 * h1 + h1 / 2; wi.Qg(g0[2]); wi.pI(c - g0[2] / 2 + oy0 * g0[2]); }
+			if (noGd) { const oy0 = wi.originY(), h1 = wi.h(), c = wi.y() - oy0 * h1 + h1 / 2; wi.setH(g0[2]); wi.setY(c - g0[2] / 2 + oy0 * g0[2]); }
 			if ((!t.thai || Array.isArray(t.gd) || noGd) && !modUnits) {
-				const h = wi.dT(), oy = wi.Jj(), y = wi.cI();
+				const h = wi.h(), oy = wi.originY(), y = wi.y();
 				const va = typeof t.va === "string" ? VALIGN[t.va] : t.va;
-				const cap = CAPS[inst.pZ().iq().Bf()], fixedH = FIXED[inst.pZ().iq().Bf()];
+				const cap = CAPS[type], fixedH = FIXED[type];
 				const grow = fixedH ? Math.max(0, fixedH - h) : Math.max(0, Math.min(Math.ceil((f.lineH - f.ch0) * scale0) + 2, cap ? cap - h : Infinity)), shift = f.dy * scale0;
 				const top = y - oy * h;
 				const newTop = (va === 2 ? top - grow : va === 1 ? top - grow / 2 - shift / 2 : top - shift) + (f.moveDown || 0);
-				wi.Qg(h + grow);
-				wi.pI(newTop + oy * (h + grow));
-				inst.__thaiGd = [grow, wi.cI() - y];
+				wi.setH(h + grow);
+				wi.setY(newTop + oy * (h + grow));
+				inst.__thaiGd = [grow, wi.y() - y];
 			}
-			wi.Cj();
+			wi.changed();
 			return n;
 		} catch (e) { console.error("[thai] load", e); return t; }
 	};
@@ -422,13 +463,13 @@ function patchSaveLoad(js, fontInfos, grownBy, warnings) {
 			const f = fontOf(inst);
 			if (!f || t.cw !== f.cw || t.cs !== f.cs) return t;
 			// gd: box growth of this instance (grown on load) or of the layout instances (grown by the build).
-			const gd = inst.__thaiGd || GROWN[inst.pZ().iq().Bf()];
+			const gd = inst.__thaiGd || GROWN[typeName(inst)];
 			return Object.assign({}, t, { cw: f.cw0, ch: f.ch0, cs: f.cs0, sd: f.sd0, csc: t.csc * f.k, csp: f.csp0, lh: t.lh - f.lhx, thai: 1 }, gd ? { gd } : {});
 		} catch (e) { console.error("[thai] save", e); return t; }
 	};
 })();
 `;
-	return parts.join(SAVE_HOOK_REPLACE) + runtime;
+	return js.replace(SAVE_HOOK_RE, SAVE_HOOK_REPLACE) + runtime;
 }
 
 // Word-wrap simulation for the dialogue box and choices: how many lines each translated text needs
@@ -492,16 +533,17 @@ function checkWrapOne(WRAP_CHECK, T, instancesByType, fonts, encodedByCat, warni
 // items saved before the mod came back in English (seen in game 2026-09-22). Hooks in the engine's
 // instance load/save: load maps an English string to the Thai text, save maps it back, so saves
 // stay valid for the original game. Exact-match only; dialogue/options are not instance variables.
-const IV_LOAD_FIND = "let n=e;null===n&&(n=NaN),this.KHt[i]=n";
-const IV_LOAD_REPLACE = "let n=self.__thaiIvLoad?self.__thaiIvLoad(e):e;null===n&&(n=NaN),this.KHt[i]=n";
-const IV_SAVE_FIND = "t[e[s].toString()]=this.KHt[s]";
-const IV_SAVE_REPLACE = "t[e[s].toString()]=self.__thaiIvSave?self.__thaiIvSave(this.KHt[s]):this.KHt[s]";
+// The instance-variable array field is renamed by every update (KHt on 09-23, jFt on 10-07): wildcard.
+const IV_LOAD_RE = /let n=e;null===n&&\(n=NaN\),this\.([\w$]+)\[i\]=n/g;
+const IV_LOAD_REPLACE = "let n=self.__thaiIvLoad?self.__thaiIvLoad(e):e;null===n&&(n=NaN),this.$1[i]=n";
+const IV_SAVE_RE = /t\[e\[s\]\.toString\(\)\]=this\.([\w$]+)\[s\]/g;
+const IV_SAVE_REPLACE = "t[e[s].toString()]=self.__thaiIvSave?self.__thaiIvSave(this.$1[s]):this.$1[s]";
 
 function patchInstanceVars(js, ivMap, warnings) {
-	const nLoad = js.split(IV_LOAD_FIND).length - 1, nSave = js.split(IV_SAVE_FIND).length - 1;
+	const nLoad = (js.match(IV_LOAD_RE) || []).length, nSave = (js.match(IV_SAVE_RE) || []).length;
 	if (nLoad !== 1 || nSave !== 1) { warnings.push(`instance variable save/load code not found (${nLoad}/${nSave}) - items from old saves stay English`); return js; }
 	log(`instance variable hook: ${ivMap.size} strings`);
-	return js.replace(IV_LOAD_FIND, IV_LOAD_REPLACE).replace(IV_SAVE_FIND, IV_SAVE_REPLACE) + `
+	return js.replace(IV_LOAD_RE, IV_LOAD_REPLACE).replace(IV_SAVE_RE, IV_SAVE_REPLACE) + `
 ;(() => {
 	const toThai = new Map(${JSON.stringify([...ivMap])});
 	const toEnglish = new Map([...toThai].map(([en, th]) => [th, en]));
@@ -521,7 +563,7 @@ function patchInstanceVars(js, ivMap, warnings) {
 // names from this build: runtime.QH (= objects) and cls.BV() (= getAllInstances).
 function scrollRuntime(T, instancesByType, fonts, P, warnings) {
 	const boxes = [];
-	for (const [type, opt] of Object.entries(SCROLL_BOXES)) {
+	for (const type of Object.keys(SCROLL_BOXES)) {
 		const ti = T.findIndex(t => t[0] === type);
 		const inst = (instancesByType.get(ti) || [])[0];
 		const font = [...fonts.values()].find(f => f.types.includes(type));
@@ -530,10 +572,13 @@ function scrollRuntime(T, instancesByType, fonts, P, warnings) {
 		for (const [w, chars] of JSON.parse(font.spacingData)) for (const ch of chars) widths[ch] = w * scale;
 		const cellH = font.cell * scale, advance = cellH + inst[5][8];
 		const rows = Math.max(1, Math.floor((inst[0][4] - cellH) / advance) + 1);
-		boxes.push({ type, widths, def: font.cell * scale, rows, barX: opt.barX });
+		// cellH / advance go to the runtime as well: the same box serves both the item panel and
+		// the upgrade panel and the game gives them different heights, so the number of visible
+		// lines is worked out from the live height rather than the one placed in the layout.
+		boxes.push({ type, widths, def: font.cell * scale, rows, cellH, advance });
 	}
 	if (!boxes.length) return "";
-	log(`scroll boxes: ${boxes.map(b => `${b.type} (${b.rows} lines)`).join(", ")}`);
+	log(`scroll boxes: ${boxes.map(b => `${b.type} (${b.rows} lines at its placed height)`).join(", ")}`);
 	return `
 ;(() => {
 	const BOXES = ${JSON.stringify(boxes)};
@@ -569,11 +614,15 @@ function scrollRuntime(T, instancesByType, fonts, P, warnings) {
 		return lines;
 	}
 	self.runOnStartup(runtime => {
-		const state = BOXES.map(() => ({ inst: null, full: null, shown: null, lines: [], scroll: 0 }));
+		const state = BOXES.map(() => ({ inst: null, full: null, shown: null, lines: [], scroll: 0, rows: 1 }));
 		let bar = null;
 		const canvasRect = () => { const c = document.querySelector("canvas"); return c ? c.getBoundingClientRect() : null; };
+		// Lines that fit right now: the game reuses this box for the item panel and the upgrade
+		// panel at different heights, so it is measured rather than baked in at build time.
+		const rowsOf = (box, inst) => Math.max(1, Math.floor((inst.height - box.cellH) / box.advance) + 1);
+		const barX = inst => inst.x + inst.width + 2;
 		function drawBar(box, st) {
-			const inst = st.inst, over = inst && inst.isVisible && st.lines.length > box.rows;
+			const inst = st.inst, over = inst && inst.isVisible && st.lines.length > st.rows;
 			if (!bar) {
 				bar = document.createElement("div");
 				bar.style.cssText = "position:fixed;pointer-events:none;z-index:50;background:rgba(0,40,10,0.85)";
@@ -583,18 +632,23 @@ function scrollRuntime(T, instancesByType, fonts, P, warnings) {
 			if (!over) { bar.style.display = "none"; return; }
 			const r = canvasRect(); if (!r) return;
 			const sx = r.width / VIEW_W, sy = r.height / VIEW_H, h = inst.height;
-			Object.assign(bar.style, { display: "block", left: (r.left + box.barX * sx) + "px", top: (r.top + inst.y * sy) + "px", width: Math.round(2 * sx) + "px", height: (h * sy) + "px" });
-			const th = Math.max(8, h * box.rows / st.lines.length), ty = (h - th) * st.scroll / (st.lines.length - box.rows);
+			Object.assign(bar.style, { display: "block", left: (r.left + barX(inst) * sx) + "px", top: (r.top + inst.y * sy) + "px", width: Math.round(2 * sx) + "px", height: (h * sy) + "px" });
+			const th = Math.max(8, h * st.rows / st.lines.length), ty = (h - th) * st.scroll / (st.lines.length - st.rows);
 			Object.assign(bar.firstChild.style, { position: "absolute", left: "0", width: "100%", top: Math.round(ty) * sy + "px", height: Math.round(th) * sy + "px", background: "#24ff6d" });
 		}
 		function apply(k) {
 			const box = BOXES[k], st = state[k];
-			st.scroll = Math.max(0, Math.min(st.scroll, st.lines.length - box.rows));
-			st.shown = st.lines.slice(st.scroll, st.scroll + box.rows).map(l => l.text).join("\\n");
+			st.rows = rowsOf(box, st.inst);
+			st.scroll = Math.max(0, Math.min(st.scroll, st.lines.length - st.rows));
+			st.shown = st.lines.slice(st.scroll, st.scroll + st.rows).map(l => l.text).join("\\n");
 			st.inst.text = st.shown;
 			drawBar(box, st);
 		}
-		runtime.addEventListener("tick", () => BOXES.forEach((box, k) => {
+		// "tick2" runs AFTER the event sheet, "tick" before it. The upgrade panel re-sets the
+		// description every tick, so a slice written on "tick" was overwritten by the game in the
+		// same frame - the scrollbar moved but the text never did. On "tick2" the slice is the
+		// last write before the frame is drawn, on both panels.
+		runtime.addEventListener("tick2", () => BOXES.forEach((box, k) => {
 			const st = state[k];
 			try {
 				if (!st.inst) {
@@ -607,7 +661,8 @@ function scrollRuntime(T, instancesByType, fonts, P, warnings) {
 				const text = st.inst.text;
 				if (text !== st.shown) {
 					if (text !== st.full) { st.full = text; st.scroll = 0; st.lines = wrap(box, text, st.inst.width - 1); }
-					if (st.lines.length > box.rows) apply(k); else st.shown = text;
+					st.rows = rowsOf(box, st.inst);
+					if (st.lines.length > st.rows) apply(k); else st.shown = text;
 				}
 				drawBar(box, st);
 			} catch (e) { console.error("[thai] scroll", e); }
@@ -626,7 +681,7 @@ function scrollRuntime(T, instancesByType, fonts, P, warnings) {
 		});
 		const scrollBy = (k, d) => {
 			const st = state[k];
-			if (!st.inst || !st.inst.isVisible || st.lines.length <= BOXES[k].rows) return false;
+			if (!st.inst || !st.inst.isVisible || st.lines.length <= st.rows) return false;
 			st.scroll += d; apply(k); return true;
 		};
 		addEventListener("keydown", e => {
@@ -638,7 +693,7 @@ function scrollRuntime(T, instancesByType, fonts, P, warnings) {
 			const x = (e.clientX - r.left) * VIEW_W / r.width, y = (e.clientY - r.top) * VIEW_H / r.height;
 			BOXES.forEach((b, k) => {
 				const inst = state[k].inst;
-				if (inst && inst.isVisible && x >= inst.x && x <= b.barX + 4 && y >= inst.y && y <= inst.y + inst.height) scrollBy(k, e.deltaY > 0 ? 2 : -2);
+				if (inst && inst.isVisible && x >= inst.x && x <= barX(inst) + 4 && y >= inst.y && y <= inst.y + inst.height) scrollBy(k, e.deltaY > 0 ? 2 : -2);
 			});
 		}, { passive: true, capture: true });
 	});
