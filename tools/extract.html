@@ -102,7 +102,7 @@ async function extract() {
 		(ly[14] || []).forEach((inst, ii) => visit(inst, lp.concat(14, ii), ly[0]));
 		if (Array.isArray(ly[21])) walkLayers(ly[21], lp.concat(21), visit);
 	});
-	P[5].forEach((layout, li) => walkLayers(layout[10], [5, li, 10], (inst, ip, layerName) => {
+	P[5].forEach((layout, li) => { const L = HM.layersIndex(layout); walkLayers(layout[L], [5, li, L], (inst, ip, layerName) => {
 		const t = T[inst[1]];
 		if (!t) return;
 		const varNames = (t[3] || []).map(v => v[2]);
@@ -127,7 +127,7 @@ async function extract() {
 			if (isUi) add("ui", text, { path }, `${t[0]} @${layoutName(li)}/${layerName}`);
 			else add("place", text, { path }, `${t[0]} @${layerName}`);
 		}
-	}));
+	}); });
 
 	// --- String literals in compiled event expressions (c3main.js)
 	log("loading c3main.js ...");

@@ -54,9 +54,14 @@ A Steam update puts the English `data.json` / `c3main.js` back (the Thai font sh
    New rows go in a new `translations/th-0NN.csv`.
 3. Run build and read the warnings. Each update re-minifies `c3main.js`:
    - the save/load and instance-variable hooks are regexes with wildcard names (should keep working);
-   - the engine methods the save/load runtime calls are in `MIN` in `build.html` - if the build says
-     they are missing, find the new names with `tools/minmap.html` (old vs new c3main.js);
-   - the SpriteFont "Set scale" action index is looked up by SID (`SET_SCALE_SIDS`).
+   - the six font field names are read from SpriteFont's save code (`fontNamesFrom`), the expression
+     table by its shape (`self.<name>=[()=>…`), so those follow updates by themselves;
+   - the world-info methods the save/load runtime calls are in `MIN` in `build.html` - if the build
+     says they are missing, find the new names with `tools/minmap.html` (old vs new c3main.js) and
+     compare each method's body with the old one before trusting the vote (names get swapped);
+   - the SpriteFont "Set scale" action index is looked up by SID (`SET_SCALE_SIDS`);
+   - data.json record layouts can change too: the 2026-11 update moved a layout's layer list from
+     `[10]` to `[11]` - `HM.layersIndex()` finds it by shape.
 4. Test in `/play`, install, bump `VERSION.txt`, make a release (the v1.0.2 installer refuses to install
    on a game build whose hooks it can't place, so players need the new release).
 

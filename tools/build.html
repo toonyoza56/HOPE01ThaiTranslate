@@ -200,7 +200,7 @@ async function build() {
 		(ly[14] || []).forEach(inst => { const t = T[inst[1]]; if (t && t[1] === 6) { (instancesByType.get(inst[1]) || instancesByType.set(inst[1], []).get(inst[1])).push(inst); } });
 		if (Array.isArray(ly[21])) walkLayers(ly[21]);
 	});
-	P[5].forEach(l => walkLayers(l[10]));
+	P[5].forEach(l => walkLayers(l[HM.layersIndex(l)]));
 
 	const thaiChars = [...thaiSingles, ...clusterToChar.keys()];
 	const glyphFor = new Map([...thaiSingles].map(c => [c, c]));
@@ -310,7 +310,7 @@ async function build() {
 // into the runtime's function table and moves when an update adds plugins/ACEs (62 on 09-23,
 // 69 on 10-07). The SIDs of known "Set scale" actions do not change, so the index is read from
 // them: the main menu hover (sets 1.1, checked in game) and leave (sets 1).
-// A number parameter is [0, [exprIndex]] into the expression table self.rwt in c3main.js, where
+// A number parameter is [0, [exprIndex]] into the expression table (self.rwt, now self.KCt) in c3main.js, where
 // constants look like ()=>1.1.
 const SET_SCALE_SIDS = [651754103865984, 917024817865011];
 
@@ -339,7 +339,7 @@ function patchScaleActions(P, js, upscaleOf, warnings) {
 	}
 
 	const table = parseExprTable(js);
-	if (!table) { warnings.push("expression table self.rwt not found in c3main.js - scale actions not adjusted"); return js; }
+	if (!table) { warnings.push("expression table (self.<name>=[()=>…]) not found in c3main.js - scale actions not adjusted"); return js; }
 	log(`expression table: ${table.entries.length} entries`);
 	const added = [], addedIndex = new Map();
 	const constIndex = value => {
@@ -377,18 +377,26 @@ function patchScaleActions(P, js, upscaleOf, warnings) {
 //  - save: a patched font is written in the original font's units (+ `thai: 1`), so the save
 //    still loads correctly after uninstalling the mod.
 // Minified engine names used by the runtime code below. Every game update re-minifies c3main.js
-// and may rename them: find the new names with tools/minmap.html (old vs new c3main.js), then
-// check each with a usage count (`grep -o "\.name(" | wc -l` must equal the old name's count).
-// Checked against the game build of 2026-10-07 (the 2026-09-23 names are in the comments).
+// and renames them. The font ones are read from SpriteFont's own save code on every build
+// (fontNamesFrom); the rest must be updated by hand: find the new names with tools/minmap.html
+// (old vs new c3main.js), then check each one's method body against the old one.
+// Checked against the game build of 2026-11-01 (older names in the comments: 10-07 / 09-23).
 const MIN = {
-	font: "RLt", settings: "b8t",          // sdk inst .RLt.b8t() = font settings
-	cw: "X8t", ch: "Z8t", cs: "Q8t", sd: "t6t", // settings: cell w / cell h / charset / spacing data
-	wi: "uW",                              // world info
-	y: "oy", setY: "gy",                   // 09-23: cI, pI
-	h: "dT", setH: "Qg",
-	originY: "Xz", bboxChanged: "Cz",      // 09-23: Jj, Cj
-	inst: "pZ", objectClass: "iq", name: "Bf" // sdk inst -> instance -> object class -> name
+	font: "SFt", settings: "_9t",          // sdk inst .SFt._9t() = font settings (RLt.b8t)
+	cw: "q9t", ch: "K9t", cs: "$9t", sd: "j9t", // settings: cell w / cell h / charset / spacing data
+	wi: "hV",                              // world info (uW)
+	y: "my", setY: "Sy",                   // (oy, gy / cI, pI)
+	h: "_T", setH: "eT",                   // (dT, Qg)
+	originY: "jJ", bboxChanged: "wJ",      // (Xz, Cz / Jj, Cj)
+	inst: "O0", objectClass: "e$", name: "Yf" // sdk inst -> instance -> object class -> name (pZ, iq, Bf)
 };
+// SpriteFont's SaveToJson names all six font fields: cw:this.<font>.<settings>().<cw>(), ch:…
+function fontNamesFrom(js) {
+	const m = /cw:this\.([\w$]+)\.([\w$]+)\(\)\.([\w$]+)\(\),ch:this\.\1\.\2\(\)\.([\w$]+)\(\),cs:this\.\1\.\2\(\)\.([\w$]+)\(\),sd:this\.\1\.\2\(\)\.([\w$]+)\(\)/.exec(js);
+	if (!m) return false;
+	[MIN.font, MIN.settings, MIN.cw, MIN.ch, MIN.cs, MIN.sd] = m.slice(1);
+	return true;
+}
 // The SpriteFont SaveToJson ... LoadFromJson boundary. Only SpriteFont returns right after the
 // typewriter `tw` field (Text saves more after it), so this matches once. Property and method
 // names are wildcards: they change with every update.
@@ -398,6 +406,7 @@ const SAVE_HOOK_REPLACE = "$1self.__thaiSave?self.__thaiSave(this,t):t$2t=self._
 function patchSaveLoad(js, fontInfos, grownBy, warnings) {
 	const matches = js.match(SAVE_HOOK_RE) || [];
 	if (matches.length !== 1) { warnings.push(`SpriteFont save/load code not found (${matches.length} matches) - old saves will show no Thai text`); return js; }
+	if (!fontNamesFrom(js)) warnings.push("SpriteFont font field names not found in its save code - using the MIN table as written");
 	const defined = (k, n) => k === "font" ? js.includes(`this.${n}=`) : js.includes(`}${n}(`); // font is a field, the rest are methods
 	const missing = Object.entries(MIN).filter(([k, n]) => !defined(k, n)).map(([k, n]) => `${k}=${n}`);
 	if (missing.length) { warnings.push(`minified names not defined in c3main.js: ${missing.join(", ")} - update MIN (tools/minmap.html); old saves will show no Thai text`); return js; }
@@ -701,11 +710,14 @@ function scrollRuntime(T, instancesByType, fonts, P, warnings) {
 `;
 }
 
-// Finds `self.rwt=[ ... ]` and splits it into top-level entries (their source text).
+// Finds the expression table `self.<name>=[()=>…, …]` and splits it into top-level entries (their
+// source text). The global is renamed by updates (rwt until 10-07, KCt on 11-01), so it is found by
+// its shape: the only global array that starts with an arrow function.
 function parseExprTable(js) {
-	const start = js.indexOf("self.rwt=[");
-	if (start < 0) return null;
-	let i = start + "self.rwt=[".length, depth = 0, entryStart = i;
+	const heads = [...js.matchAll(/self\.[\w$]+=\[\(\)=>/g)];
+	if (heads.length !== 1) return null;
+	const start = heads[0].index;
+	let i = start + heads[0][0].length - "()=>".length, depth = 0, entryStart = i;
 	const entries = [];
 	for (; i < js.length; ++i) {
 		const c = js[i];

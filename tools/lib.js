@@ -12,6 +12,16 @@ const HM = {
 		if (!res.ok && res.status !== 204) throw new Error(`save build/${path} failed: ${res.status}`);
 	},
 
+	// Index of a layout's layer list in data.json. Found by its shape, not a fixed number: the
+	// 2026-11 game update inserted a field into the layout record and the list moved from [10]
+	// to [11]. A layer is [name, …, instances at 14, …, sub-layers at 21].
+	layersIndex(layout) {
+		const isLayer = L => Array.isArray(L) && typeof L[0] === "string" && Array.isArray(L[14]);
+		const i = layout.findIndex((v, k) => k > 0 && Array.isArray(v) && v.length && v.every(isLayer));
+		if (i < 0) throw new Error(`layout ${layout[0]}: layer list not found`);
+		return i;
+	},
+
 	// CSV with a UTF-8 BOM so Excel shows Thai correctly. Real newlines in values are
 	// written as the two characters "\n" to keep one row per line.
 	toCsv(rows, columns) {
